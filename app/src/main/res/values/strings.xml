@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">GreenDaoDemo</string>
+    <string name="describe">数据采集</string>
+    <string name="Camerahit">点我采集</string>
+    <string name="filename">/sdcard/photograph/test/</string>
+    <string name="finsh">返回</string>
+    <string name="agin">继续拍摄</string>
+    <string name="nothing"></string>
+    <string name="imagename">照片名</string>
+    <string name="save">保存</string>
+</resources>
