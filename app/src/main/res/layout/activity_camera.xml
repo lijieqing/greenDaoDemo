@@ -9,82 +9,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
-        <TextView
+        <LinearLayout
+            android:orientation="vertical"
             android:id="@+id/describe"
             android:layout_alignParentTop="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/describe"
             android:textSize="20sp"
             android:layout_centerInParent="true"
-            />
+            >
+
+        </LinearLayout>
 
 
         <Button
             android:id="@+id/Camerabtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:text="@string/Camerahit"
             android:textSize="18sp"
             android:layout_centerInParent="true"
-            />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/imageshowlayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        >
-        <Button
-            android:id="@+id/finish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/finsh"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            />
-
-        <Button
-            android:id="@+id/agin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/agin"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            />
-
-        <ImageView
-            android:id="@+id/photoshow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="@string/nothing"
-            android:scaleType="centerCrop"
-            android:layout_centerHorizontal="true"
-            android:adjustViewBounds="true"
-            android:layout_below="@+id/agin"
-            />
-        <EditText
-            android:id="@+id/editname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/imagename"
-            android:layout_below="@+id/photoshow"
-            />
-        <Button
-            android:id="@+id/savebtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/save"
-            android:layout_below="@+id/editname"
-            />
-        <Button
-            android:id="@+id/copyPic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="保存原图"
-            android:layout_below="@+id/editname"
-            android:layout_toRightOf="@id/savebtn"
             />
     </RelativeLayout>
 </RelativeLayout>

@@ -3,6 +3,7 @@ package com.lee.greendaodemo.cameraModule;
 import java.io.File;
 
 
+import android.app.AlertDialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,91 +34,28 @@ public class CameraActivity extends Activity implements OnClickListener{
     private Button Camerabtn;
     EditText  editname;
     Bitmap bitmap,mBitmap;
+    AlertDialog dialog;
+    CameraRecordView cameraRecordView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-
-        editname=(EditText) findViewById(R.id.editname);
         Camerabtn=(Button) findViewById(R.id.Camerabtn);
-        finish=(Button) findViewById(R.id.finish);
-        agin=(Button) findViewById(R.id.agin);
-        savebtn=(Button) findViewById(R.id.savebtn);
-        savePic=(Button) findViewById(R.id.copyPic);
-        photoshow=(ImageView) findViewById(R.id.photoshow);
-        takephoto=(RelativeLayout) findViewById(R.id.takephoto);
-        imageshowlayout=(RelativeLayout) findViewById(R.id.imageshowlayout);
         Camerabtn.setOnClickListener(this);
-        agin.setOnClickListener(this);
-        savebtn.setOnClickListener(this);
-        finish.setOnClickListener(this);
-        savePic.setOnClickListener(this);
-
+        cameraRecordView = new CameraRecordView(this,this);
     }
     @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub
-        Intent cameraIntent=null;
-        Uri imageUri=null;
-
         switch (v.getId()) {
             case R.id.Camerabtn:
-//		   Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//			startActivityForResult(intent, 1);
-                cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                imageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),"workupload.jpg"));
-                //指定照片保存路径（SD卡），workupload.jpg为一个临时文件，每次拍照后这个图片都会被替换
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(cameraIntent, 1);
-                break;
-            case R.id.finish:
-                takephoto.setVisibility(View.VISIBLE);
-                imageshowlayout.setVisibility(View.GONE);
-                break;
-            case R.id.agin:
-                cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                imageUri  = Uri.fromFile(new File(Environment.getExternalStorageDirectory(),"workupload.jpg"));
-                //指定照片保存路径（SD卡），workupload.jpg为一个临时文件，每次拍照后这个图片都会被替换
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                startActivityForResult(cameraIntent, 1);
-                break;
-            case R.id.savebtn:
-                String imagename=editname.getText().toString().trim();
-                if(TextUtils.isEmpty(imagename)){
-                    Toast.makeText(CameraActivity.this, "请输入照片名称", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                String sdStatus = Environment.getExternalStorageState();
-                if (!sdStatus.equals(Environment.MEDIA_MOUNTED)) { // 检测sd是否可用
-                    Log.v("TestFile",
-                            "SD card is not avaiable/writeable right now.");
-                    return;
-                }
-                String filename=Environment.getExternalStorageDirectory()+"/photograph/test/"+imagename+".png";
-
-                boolean ok = BitmapUtils.getInstance(this).saveBitmapForSdCard(bitmap, filename);
-
-                Toast.makeText(this,ok+"",Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.copyPic:
-
-                String name=editname.getText().toString().trim();
-                if(TextUtils.isEmpty(name)){
-                    Toast.makeText(CameraActivity.this, "请输入照片名称", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                String Status = Environment.getExternalStorageState();
-                if (!Status.equals(Environment.MEDIA_MOUNTED)) { // 检测sd是否可用
-                    Log.v("TestFile",
-                            "SD card is not avaiable/writeable right now.");
-                    return;
-                }
-                String fname=Environment.getExternalStorageDirectory()+"/photograph/test/"+name+".jpg";
-
-                File inFile = new File(Environment.getExternalStorageDirectory(),"workupload.jpg");
-                File outFile = new File(fname);
-                FileUtils.fileCopy(inFile,outFile);
+                dialog = new AlertDialog.Builder(this)
+                        .setTitle("拍照")
+                        .setNegativeButton("取消",null)
+                        .setCancelable(false)
+                        .create();
+                dialog.setView(cameraRecordView);
+                dialog.show();
                 break;
         }
     }
@@ -126,8 +64,8 @@ public class CameraActivity extends Activity implements OnClickListener{
         super.onActivityResult(requestCode, resultCode, data);
 
         if (resultCode == Activity.RESULT_OK) {
-            takephoto.setVisibility(View.GONE);
-            imageshowlayout.setVisibility(View.VISIBLE);
+            cameraRecordView.takephoto.setVisibility(View.GONE);
+            cameraRecordView.imageshowlayout.setVisibility(View.VISIBLE);
             Bitmap camorabitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory()+"/workupload.jpg");
             if(null != camorabitmap ){
 
@@ -137,7 +75,11 @@ public class CameraActivity extends Activity implements OnClickListener{
                 //由于Bitmap内存占用较大，这里需要回收内存，否则会报out of memory异常
                 camorabitmap.recycle();
                 //将处理过的图片显示在界面上
-                photoshow.setImageBitmap(bitmap);
+                cameraRecordView.photoshow.setImageBitmap(bitmap);
+                if (null != cameraRecordView.bitmap)
+                    cameraRecordView.bitmap.recycle();
+                cameraRecordView.bitmap = bitmap;
+                bitmap = null;
             }
         }
     }
@@ -146,9 +88,9 @@ public class CameraActivity extends Activity implements OnClickListener{
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         // TODO Auto-generated method stub
         if (keyCode == KeyEvent.KEYCODE_BACK) { // 监控/拦截/屏蔽返回键
-            if (imageshowlayout.getVisibility() == View.VISIBLE) {
-                imageshowlayout.setVisibility(View.GONE);
-                takephoto.setVisibility(View.VISIBLE);
+            if (cameraRecordView.imageshowlayout.getVisibility() == View.VISIBLE) {
+                cameraRecordView.imageshowlayout.setVisibility(View.GONE);
+                cameraRecordView.takephoto.setVisibility(View.VISIBLE);
             } else {
                 finish();
             }
